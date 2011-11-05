@@ -1,0 +1,129 @@
+name: CustomMusic
+
+
+main: de.WegFetZ.CustomMusic.CustomMusic
+version: 0.9_dev
+
+commands:
+  cm:
+    description: CustomMusic plugin
+    usage: type /cm for more info
+  custommusic:
+    description: CustomMusic plugin
+    usage: type /custommusic for more info
+permissions:
+    cm.*:
+        description: Gives access to all CustomMusic commands
+        children:
+            cm.init: true
+            cm.upload.mp3: true
+            cm.upload.midi: true
+            cm.upload.webradio: true
+            cm.box.set: true
+            cm.box.set.overlap: true
+            cm.box.list.player: true
+            cm.box.delete.player: true
+            cm.area.define: true
+            cm.area.set: true
+            cm.area.set.overlap: true
+            cm.area.list.player: true
+            cm.area.delete.player: true
+            cm.song.list.player: true
+            cm.song.delete.player: true
+            cm.song.play.global: true
+            cm.song.stop.global: true
+            cm.radio.list.player: true
+            cm.radio.delete.player: true
+            cm.reload: true
+    cm.upload.*:
+        description: Gives access to upload mp3,midi and webradio files
+        children:
+            cm.upload.mp3: true
+            cm.upload.midi: true
+            cm.upload.webradio: true
+    cm.box.*:
+        description: Allows you to use every box command but not deleting another player's box
+        children:
+            cm.box.set: true
+            cm.box.overlap: true
+            cm.box.list.player: true
+    cm.area.*:
+        description: Allows you to use every area command but not deleting another player's area
+        children:
+            cm.area.define: true
+            cm.area.set: true
+            cm.area.overlap: true
+            cm.area.list.player: true
+    cm.delete.*:
+        description: Allows you to delete other player's boxes, areas and songs
+        children:
+            cm.box.delete.player: true
+            cm.area.delete.player: true
+            cm.song.delete.player: true
+    cm.list.*:
+       description: Allows you to view a list of other player's boxes, areas, webradio stations and songs
+       children:
+            cm.box.list.player: true
+            cm.area.list.player: true
+            cm.song.list.player: true
+            cm.radio.list.player: true
+    cm.init:
+       description: Allows you to use the audio client
+       default: true
+    cm.upload.webradio:
+       description: Allows you to upload webradio files
+       default: op
+    cm.upload.midi:
+       description: Allows you to upload midi files
+       default: op
+    cm.upload.mp3:
+       description: Allows you to upload mp3 files
+       default: op
+    cm.box.set:
+       description: Allows you to set boxes
+       default: op
+    cm.box.set.overlap:
+       description: Allows you to set boxes
+       default: op
+    cm.box.list.player:
+       description: Allows you to view a list of other player's boxes
+       default: true
+    cm.box.delete.player:
+       description: Allows you to delete other player's boxes
+       default: op
+    cm.area.define:
+       description: Allows you to define the corners of a cuboid-area
+       default: op
+    cm.area.set:
+       description: Allows you to set areas
+       default: op
+    cm.area.set.overlap:
+       description: Allows you to set areas
+       default: op
+    cm.area.list.player:
+       description: Allows you to view a list of other player's areas
+       default: true
+    cm.area.delete.player:
+       description: Allows you to delete other player's areas
+       default: op
+    cm.song.list.player:
+       description: Allows you to view a list of other player's songs
+       default: true
+    cm.song.delete.player:
+       description: Allows you to delete other player's songs
+       default: op
+    cm.song.play.global:
+       description: Allows you to play a song for every player
+       default: op
+    cm.song.stop.global:
+       description: Allows you to stop a song that is playing for every player
+       default: op
+    cm.radio.list.player:
+       description: Allows you to view a list of other player's webradio stations
+       default: true
+    cm.radio.delete.player:
+       description: Allows you to delete other player's webradio stations
+       default: op
+    cm.reload:
+       description: Allows you to reload the CustomMusic configuration and servers
+       default: true
