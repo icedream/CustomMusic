@@ -18,6 +18,9 @@ public class GlobalData {
 	public final static HashMap<Integer, String> CMDeleteSongs = new HashMap<Integer, String>();
 	public final static HashMap<Player, Location[]> CMAreaDefinitions = new HashMap<Player,Location[]>();
 	
+	//available biomes
+	public final static String[] av_biomes = new String[] {"DESERT","EXTREME_HILLS","FOREST","HELL","ICE_DESERT","OCEAN","PLAINS","RAINFOREST","RIVER","SAVANNA","SEASONAL_FOREST","SHRUBLAND","SKY","SWAMPLAND","TAIGA","TUNDRA"};
+	
 	// box stuff
 	static String[] box_aworld = new String[0];
 	static String[] box_aowner = new String[0];
@@ -84,13 +87,18 @@ public class GlobalData {
 	//world stuff
 	static String[] world_aowner = new String[0];
 	static String[] world_aworld = new String[0];
+	static String[] world_asongList = new String[0];
 	static Integer[] world_aprior = new Integer[0];
 	static Integer[] world_avolume = new Integer[0];
 	
 	static List<String> world_lowner = new ArrayList<String>();
 	static List<String> world_lworld = new ArrayList<String>();
+	static List<String> world_lsongList = new ArrayList<String>();
 	static List<Integer> world_lprior = new ArrayList<Integer>();
 	static List<Integer> world_lvolume = new ArrayList<Integer>();
+	
+	static List<String> world_lignoByPlayer = new ArrayList<String>();
+	static List<String> world_lignoWorld = new ArrayList<String>();
 
 	static int world_count = 0;
 	
@@ -98,13 +106,18 @@ public class GlobalData {
 	//biome stuff
 	static String[] biome_aowner = new String[0];
 	static String[] biome_abiome = new String[0];
+	static String[] biome_asongList = new String[0];
 	static Integer[] biome_aprior = new Integer[0];
 	static Integer[] biome_avolume = new Integer[0];
 
 	static List<String> biome_lowner = new ArrayList<String>();
 	static List<String> biome_lbiome = new ArrayList<String>();
+	static List<String> biome_lsongList = new ArrayList<String>();
 	static List<Integer> biome_lprior = new ArrayList<Integer>();
 	static List<Integer> biome_lvolume = new ArrayList<Integer>();
+	
+	static List<String> biome_lignoByPlayer = new ArrayList<String>();
+	static List<String> biome_lignoBiome = new ArrayList<String>();
 	
 	static int biome_count = 0;
 	
@@ -165,15 +178,34 @@ public class GlobalData {
 		area_aworld = (String[]) area_lworld.toArray(area_aworld);
 	}
 	
-	private static Object resizeArray(Object oldArray, int newSize) {
-		int oldSize = java.lang.reflect.Array.getLength(oldArray);
-		Class<?> elementType = oldArray.getClass().getComponentType();
-		Object newArray = java.lang.reflect.Array.newInstance(elementType, newSize);
-		int preserveLength = Math.min(oldSize, newSize);
-		if (preserveLength > 0)
-			System.arraycopy(oldArray, 0, newArray, 0, preserveLength);
-		return newArray;
+	public static void createWorldArrays() {
+		resizeArray(world_aowner, world_lowner.size());
+		resizeArray(world_aworld, world_lworld.size());
+		resizeArray(world_asongList, world_lsongList.size());
+		resizeArray(world_avolume, world_lvolume.size());
+		resizeArray(world_aprior, world_lprior.size());
+		
+		world_aowner = (String[]) world_lowner.toArray(world_aowner);
+		world_aworld = (String[]) world_lworld.toArray(world_aworld);
+		world_asongList = (String[]) world_lsongList.toArray(world_asongList);
+		world_avolume = (Integer[]) world_lvolume.toArray(world_avolume);
+		world_aprior = (Integer[]) world_lprior.toArray(world_aprior);
 	}
+	
+	public static void createBiomeArrays() {
+		resizeArray(biome_aowner, biome_lowner.size());
+		resizeArray(biome_abiome, biome_lbiome.size());
+		resizeArray(biome_asongList, biome_lsongList.size());
+		resizeArray(biome_avolume, biome_lvolume.size());
+		resizeArray(biome_aprior, biome_lprior.size());
+		
+		biome_aowner = (String[]) biome_lowner.toArray(biome_aowner);
+		biome_abiome = (String[]) biome_lbiome.toArray(biome_abiome);
+		biome_asongList = (String[]) biome_lsongList.toArray(biome_asongList);
+		biome_avolume = (Integer[]) biome_lvolume.toArray(biome_avolume);
+		biome_aprior = (Integer[]) biome_lprior.toArray(biome_aprior);
+	}
+
 
 	public static void clearBoxArrays() {
 		box_lworld.clear();
@@ -213,7 +245,7 @@ public class GlobalData {
 		area_lowner.clear();
 		area_lprior.clear();
 		area_lworld.clear();
-		area_lfadeoutRange.clear();
+		
 		
 		area_count = 0;
 		
@@ -231,6 +263,36 @@ public class GlobalData {
 		resizeArray(area_afadeoutRange, 0);
 	}
 	
+	public static void clearWorldArrays() {
+		world_lowner.clear();
+		world_lworld.clear();
+		world_lsongList.clear();
+		world_lvolume.clear();
+		world_lprior.clear();
+
+		
+		resizeArray(world_aowner, 0);
+		resizeArray(world_aworld, 0);
+		resizeArray(world_asongList, 0);
+		resizeArray(world_avolume, 0);
+		resizeArray(world_aprior, 0);
+	}
+	
+	public static void clearBiomeArrays() {
+		biome_lowner.clear();
+		biome_lbiome.clear();
+		biome_lsongList.clear();
+		biome_lvolume.clear();
+		biome_lprior.clear();
+
+		
+		resizeArray(biome_aowner, 0);
+		resizeArray(biome_abiome, 0);
+		resizeArray(biome_asongList, 0);
+		resizeArray(biome_avolume, 0);
+		resizeArray(biome_aprior, 0);
+	}
+	
 	public static void clearBoxIgno() {
 		box_lignoByPlayer.clear();
 		box_lignoOwner.clear();
@@ -241,6 +303,26 @@ public class GlobalData {
 		area_lignoByPlayer.clear();
 		area_lignoOwner.clear();
 		area_lignoAreaNumber.clear();
+	}
+
+	public static void clearWorldIgno() {
+		world_lignoByPlayer.clear();
+		world_lignoWorld.clear();
+	}
+	
+	public static void clearBiomeIgno() {
+		biome_lignoByPlayer.clear();
+		biome_lignoBiome.clear();
+	}
+	
+	private static Object resizeArray(Object oldArray, int newSize) {
+		int oldSize = java.lang.reflect.Array.getLength(oldArray);
+		Class<?> elementType = oldArray.getClass().getComponentType();
+		Object newArray = java.lang.reflect.Array.newInstance(elementType, newSize);
+		int preserveLength = Math.min(oldSize, newSize);
+		if (preserveLength > 0)
+			System.arraycopy(oldArray, 0, newArray, 0, preserveLength);
+		return newArray;
 	}
 	
 }

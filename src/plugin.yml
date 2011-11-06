@@ -1,8 +1,8 @@
 name: CustomMusic
 
 
-main: de.WegFetZ.CustomMusic.CustomMusic
-version: 0.9_dev
+main: main.java.de.WegFetZ.CustomMusic.CustomMusic
+version: 0.9
 
 commands:
   cm:
@@ -35,6 +35,8 @@ permissions:
             cm.radio.list.player: true
             cm.radio.delete.player: true
             cm.reload: true
+            cm.world.set: true
+            cm.biome.set: true
     cm.upload.*:
         description: Gives access to upload mp3,midi and webradio files
         children:
@@ -126,4 +128,10 @@ permissions:
        default: op
     cm.reload:
        description: Allows you to reload the CustomMusic configuration and servers
+       default: true
+    cm.world.set:
+       description: Allows you to manage world-specific music
+       default: true
+    cm.biome.set:
+       description: Allows you to manage biome-specific music
        default: true

@@ -47,7 +47,7 @@ public class Mp3PlayerHandler {
 		}
 	}
 
-	public static void startPlaying(Player player, String box, String volume, String number, int priority, Boolean isArea) {
+	public static void startPlaying(Player player, String box, String volume, String number, int priority, String type) {
 		// add the box to the CMPlaying map or only change the volume if it
 		// already exists
 
@@ -70,14 +70,20 @@ public class Mp3PlayerHandler {
 														// played
 
 			String songString = null;
-			if (isArea)
+			if (type.equals("area"))
 				songString = getAreaSongList(box, number); // get the string of
 															// songs to play on
 															// this area
-			else
+			else if (type.equals("box"))
 				songString = getBoxSongList(box, number); // get the string of
 															// songs to play on
 															// this box
+			else if (type.equals("world"))
+				songString = getWorldSongList(box, number); // get the string of
+			// songs to play in this world
+			else if (type.equals("biome"))
+				songString = getBiomeSongList(box, number); // get the string of
+			// songs to play in this biome
 
 			if (songString != null) {
 				playerList.add(volume + ":" + box + ":" + String.valueOf(number) + ":" + String.valueOf(priority) + ":" + songString);
@@ -187,6 +193,72 @@ public class Mp3PlayerHandler {
 			}
 		}
 		return null;
+	}
+
+	private static String getWorldSongList(String owner, String world) {
+		// get the songs a certain world needs to play
+		String songString = null;
+
+		if (world.length() > 1) {
+			try {
+				int l = Integer.parseInt(world.substring(1));
+
+				if (l < GlobalData.world_asongList.length)
+					songString = GlobalData.world_asongList[l];
+			} catch (NumberFormatException e) {
+			}
+		}
+
+		if (songString == null) { // play every song
+
+			songString = "";
+			File file = new File(CustomMusic.maindir + "Music/" + (String.valueOf(owner).toLowerCase()) + "/");
+
+			if (file.exists()) {
+				String[] songList = file.list();
+
+				for (int n = 0; n < songList.length; n++) {
+					if (!(new File(CustomMusic.maindir + "Music/" + (String.valueOf(owner).toLowerCase()) + "/" + songList[n]).isDirectory()))
+						songString = songString + songList[n] + ">>";
+				} // ==> adds the content of the player's music
+					// directory to the song string
+			}
+		}
+		return songString;
+	}
+
+	private static String getBiomeSongList(String owner, String biome) {
+		// get the songs a certain biome needs to play
+		String songString = null;
+
+		if (biome.length() > 1) {
+			try {
+				int l = Integer.parseInt(biome.substring(3));
+
+				if (l < GlobalData.biome_asongList.length)
+					songString = GlobalData.biome_asongList[l];
+			} catch (NumberFormatException e) {
+			}
+		}
+
+		if (songString == null) { // play every song
+
+			songString = "";
+			File file = new File(CustomMusic.maindir + "Music/" + (String.valueOf(owner).toLowerCase()) + "/");
+
+			if (file.exists()) {
+				String[] songList = file.list();
+
+				for (int n = 0; n < songList.length; n++) {
+					if (!(new File(CustomMusic.maindir + "Music/" + (String.valueOf(owner).toLowerCase()) + "/" + songList[n]).isDirectory()))
+						songString = songString + songList[n] + ">>";
+				} // ==> adds the content of the player's music
+					// directory to the song string
+			}
+		}
+
+		return songString;
+
 	}
 
 	public static void stopPlaying(Player player, String box, String number) {
@@ -475,8 +547,8 @@ public class Mp3PlayerHandler {
 				Calculations.inArea(player, pos); // check if player is i an
 													// area and start playing
 													// music
-				Calculations.world(player,pos); //play world-specific music
-				Calculations.biome(player,pos); //play biome-specific music
+				Calculations.world(player, pos); // play world-specific music
+				Calculations.biome(player, pos); // play biome-specific music
 
 			} else {
 				player.sendMessage("CustomMusic: " + ChatColor.RED + "Connection to AudioClient lost!");

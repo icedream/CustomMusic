@@ -195,7 +195,7 @@ public class MultiServerThread extends Thread {
 									String[] valueSplit = valueString.split(":");
 									if (valueSplit.length > 2) {
 										try {
-											if (!valueSplit[2].contains("a") && Integer.parseInt(valueSplit[2]) < 0) {
+											if (!valueSplit[2].contains("a") && !valueSplit[2].contains("w") && !valueSplit[2].contains("bio") && Integer.parseInt(valueSplit[2]) < 0) {
 												if (valueSplit.length > 5)
 													sendToClient = false;
 												else {
@@ -205,7 +205,7 @@ public class MultiServerThread extends Thread {
 												}
 											}
 										} catch (NumberFormatException e) {
-											log.debug("handling /cm (g, e)play players", e);
+											log.debug("handling /cm (g)play players", e);
 										}
 									}
 									if (sendToClient) {

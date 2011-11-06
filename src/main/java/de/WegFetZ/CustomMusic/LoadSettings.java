@@ -15,8 +15,6 @@ public class LoadSettings {
 	static String initFailedMsg;
 	static int defaultMaxWebradio;
 	static boolean ipVerification = false;
-	static public boolean WorldMusic = false;
-	static public boolean BiomeMusic = false;
 	static public boolean debug = false;
 
 	public static void loadMain() {
@@ -24,8 +22,6 @@ public class LoadSettings {
 		PluginProperties properties = new PluginProperties(propertiesFile);
 		properties.load();
 
-		WorldMusic = properties.getBoolean("Enable-World-specific-Music", false);
-		BiomeMusic = properties.getBoolean("Enable-Biome-specific-Music", false);
 		ipVerification = properties.getBoolean("Verify-IP", true);
 		debug = properties.getBooleanAndReplaceKey("Degbug-Mode", "Debug-Mode", false);
 		defaultRange = properties.getIntegerAndReplaceKey("Music-range", "Default-Music-Range", 25);
@@ -55,8 +51,13 @@ public class LoadSettings {
 			BoxList.loadareas();
 		}
 		
+		BoxList.loadworlds();
+		BoxList.loadbiomes();
+		
 		BoxList.loadAreaIgnores();
 		BoxList.loadBoxIgnores();
+		BoxList.loadWorldIgnores();
+		BoxList.loadBiomeIgnores();
 		
 		System.out.println("[CustomMusic] " + GlobalData.box_count + " jukeboxe(s) loaded.");
 		System.out.println("[CustomMusic] " + GlobalData.area_count + " area(s) loaded.");

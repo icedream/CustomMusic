@@ -27,8 +27,12 @@ public class CustomMusic extends JavaPlugin {
 	public static String maindir = "plugins/CustomMusic/";
 	public static File Boxes = new File(maindir + "BoxList.db");
 	public static File Areas = new File(maindir + "AreaList.db");
+	public static File Worlds = new File(maindir + "WorldList.db");
+	public static File Biomes = new File(maindir + "BiomeList.db");
 	public static File ignoredBoxes = new File(maindir + "ignoredBoxes.db");
 	public static File ignoredAreas = new File(maindir + "ignoredAreas.db");
+	public static File ignoredWorlds = new File(maindir + "ignoredWorlds.db");
+	public static File ignoredBiomes = new File(maindir + "ignoredBiomes.db");
 
 	private final CMPlayerListener playerListener = new CMPlayerListener(); //register the player listener
 	
@@ -48,16 +52,24 @@ public class CustomMusic extends JavaPlugin {
 		new File(maindir).mkdir();
 		new File(maindir + "Music/").mkdir();
 		new File(maindir + "Music/uploading/").mkdir();
-		
+				
 		try {
 			if (!Boxes.exists())
 				Boxes.createNewFile();
 			if (!Areas.exists())
 				Areas.createNewFile();
+			if (!Worlds.exists())
+				Worlds.createNewFile();
+			if (!Biomes.exists())
+				Biomes.createNewFile();
 			if (!ignoredBoxes.exists())
 				ignoredBoxes.createNewFile();
 			if (!ignoredAreas.exists())
 				ignoredAreas.createNewFile();
+			if (!ignoredWorlds.exists())
+				ignoredWorlds.createNewFile();
+			if (!ignoredBiomes.exists())
+				ignoredBiomes.createNewFile();
 		} catch (IOException e) {
 			log.debug("creating databases", e);
 		}
@@ -99,6 +111,12 @@ public class CustomMusic extends JavaPlugin {
 		//==> clear the hashmaps	
 		GlobalData.clearBoxArrays();
 		GlobalData.clearAreaArrays();
+		GlobalData.clearWorldArrays();
+		GlobalData.clearBiomeArrays();
+		GlobalData.clearBoxIgno();
+		GlobalData.clearAreaIgno();
+		GlobalData.clearWorldIgno();
+		GlobalData.clearBiomeIgno();
 		
 		listening = false;
 		try {
@@ -184,17 +202,17 @@ public class CustomMusic extends JavaPlugin {
 					player.sendMessage(ChatColor.RED + "'/cm deletebox [player] <number>'");
 					player.sendMessage(ChatColor.RED + "'/cm definearea <1|2>'");
 					player.sendMessage(ChatColor.RED + "'/cm setarea <number> [fadeout-range] [priority]'");
-					player.sendMessage(ChatColor.RED + "'/cm deletearea [player] <number>'");													
+					player.sendMessage(ChatColor.RED + "'/cm deletearea [player] <number>'");	
+					player.sendMessage(ChatColor.RED + "'/cm setworld [world] [<volume> <priority>]'");
+					player.sendMessage(ChatColor.RED + "'/cm setbiome [biome] [<volume> <priority>]'");
 					player.sendMessage(ChatColor.RED + "'/cm achoose <areanumber> <songnumbers>'");
 					player.sendMessage(ChatColor.RED + "'/cm bchoose <boxnumber> <songnumbers>'");
 					player.sendMessage(ChatColor.RED + "'/cm achooseradio <areanumber> <radionumber>'");
 					player.sendMessage(ChatColor.RED + "'/cm bchooseradio <boxnumber> <radionumber>'");
-					player.sendMessage(ChatColor.RED + "'/cm deletesong [player] <number>'");
-					player.sendMessage(ChatColor.RED + "'/cm deleteradio [player] <number>'");
-					player.sendMessage(ChatColor.RED + "'/cm play [player] <songnumbers>'");
-					player.sendMessage(ChatColor.RED + "'/cm gplay [player] <songnumbers>'");
-					player.sendMessage(ChatColor.RED + "'/cm playradio [player] <radionumber>'");
-					player.sendMessage(ChatColor.RED + "'/cm gplayradio [player] <radionumber>'");
+					player.sendMessage(ChatColor.RED + "'/cm wchoose [world] <songnumbers|all|none>'");
+					player.sendMessage(ChatColor.RED + "'/cm biochoose [biome] <songnumbers|all|none>'");
+					player.sendMessage(ChatColor.RED + "'/cm wchooseradio [world] <radionumber>'");
+					player.sendMessage(ChatColor.RED + "'/cm biochooseradio [biome] <radionumber>'");
 					player.sendMessage(ChatColor.RED + "'/cm volume <value>'");
 					player.sendMessage("Use " + ChatColor.RED + "'/cm help 2'" + ChatColor.WHITE + " to see more commands.");
 					return true;
@@ -206,20 +224,33 @@ public class CustomMusic extends JavaPlugin {
 						try {
 							if (split.length > 1 && Integer.parseInt(split[1]) == 2) {
 								player.sendMessage("Available commands ( [ ] means optional): ");
+								player.sendMessage(ChatColor.RED + "'/cm deletesong [player] <number>'");
+								player.sendMessage(ChatColor.RED + "'/cm deleteradio [player] <number>'");
+								player.sendMessage(ChatColor.RED + "'/cm play [player] <songnumbers>'");
+								player.sendMessage(ChatColor.RED + "'/cm gplay [player] <songnumbers>'");
+								player.sendMessage(ChatColor.RED + "'/cm playradio [player] <radionumber>'");
+								player.sendMessage(ChatColor.RED + "'/cm gplayradio [player] <radionumber>'");
+								player.sendMessage(ChatColor.RED + "'/cm stop'");
+								player.sendMessage(ChatColor.RED + "'/cm gstop'");
 								player.sendMessage(ChatColor.RED + "'/cm ignorebox <player> <number>'");
 								player.sendMessage(ChatColor.RED + "'/cm ignorearea <player> <number>'");
 								player.sendMessage(ChatColor.RED + "'/cm unignorebox <player> <number>'");
 								player.sendMessage(ChatColor.RED + "'/cm unignorearea <player> <number>'");
-								player.sendMessage(ChatColor.RED + "'/cm status'");	
-								player.sendMessage(ChatColor.RED + "'/cm users'");
 								player.sendMessage(ChatColor.RED + "'/cm songlist [player] <page>'");
 								player.sendMessage(ChatColor.RED + "'/cm radiolist [player] <page>'");
 								player.sendMessage(ChatColor.RED + "'/cm boxlist [player] <page>'");
 								player.sendMessage(ChatColor.RED + "'/cm arealist [player] <page>'");
+								player.sendMessage(ChatColor.RED + "'/cm worldlist <page>'");
+								player.sendMessage(ChatColor.RED + "'/cm biomelist <page>'");
+								player.sendMessage("Use " + ChatColor.RED + "'/cm help 3'" + ChatColor.WHITE + " to see more commands.");	
+								
+							} else if(split.length > 1 && Integer.parseInt(split[1]) == 3) {
 								player.sendMessage(ChatColor.RED + "'/cm ignorelist <page>'");
-								player.sendMessage(ChatColor.RED + "'/cm stop'");
-								player.sendMessage(ChatColor.RED + "'/cm gstop'");
+								player.sendMessage(ChatColor.RED + "'/cm status'");	
+								player.sendMessage(ChatColor.RED + "'/cm users'");
+								player.sendMessage(ChatColor.RED + "'/cm biomes'");
 								player.sendMessage(ChatColor.RED + "'/cm reload'");
+								
 							} else {
 								player.sendMessage("Available commands ( [ ] means optional): ");
 								player.sendMessage(ChatColor.RED + "'/cm init'");
@@ -228,22 +259,22 @@ public class CustomMusic extends JavaPlugin {
 								player.sendMessage(ChatColor.RED + "'/cm deletebox [player] <number>'");
 								player.sendMessage(ChatColor.RED + "'/cm definearea <1|2>'");
 								player.sendMessage(ChatColor.RED + "'/cm setarea <number> [fadeout-range] [priority]'");
-								player.sendMessage(ChatColor.RED + "'/cm deletearea [player] <number>'");													
+								player.sendMessage(ChatColor.RED + "'/cm deletearea [player] <number>'");	
+								player.sendMessage(ChatColor.RED + "'/cm setworld [world] [<volume> <priority>]'");
+								player.sendMessage(ChatColor.RED + "'/cm setbiome [biome] [<volume> <priority>]'");
 								player.sendMessage(ChatColor.RED + "'/cm achoose <areanumber> <songnumbers>'");
 								player.sendMessage(ChatColor.RED + "'/cm bchoose <boxnumber> <songnumbers>'");
 								player.sendMessage(ChatColor.RED + "'/cm achooseradio <areanumber> <radionumber>'");
 								player.sendMessage(ChatColor.RED + "'/cm bchooseradio <boxnumber> <radionumber>'");
-								player.sendMessage(ChatColor.RED + "'/cm deletesong [player] <number>'");
-								player.sendMessage(ChatColor.RED + "'/cm deleteradio [player] <number>'");
-								player.sendMessage(ChatColor.RED + "'/cm play [player] <songnumbers>'");
-								player.sendMessage(ChatColor.RED + "'/cm gplay [player] <songnumbers>'");
-								player.sendMessage(ChatColor.RED + "'/cm playradio [player] <radionumber>'");
-								player.sendMessage(ChatColor.RED + "'/cm gplayradio [player] <radionumber>'");
+								player.sendMessage(ChatColor.RED + "'/cm wchoose [world] <songnumbers|all|none>'");
+								player.sendMessage(ChatColor.RED + "'/cm biochoose [biome] <songnumbers|all|none>'");
+								player.sendMessage(ChatColor.RED + "'/cm wchooseradio [world] <radionumber>'");
+								player.sendMessage(ChatColor.RED + "'/cm biochooseradio [biome] <radionumber>'");
 								player.sendMessage(ChatColor.RED + "'/cm volume <value>'");
 								player.sendMessage("Use " + ChatColor.RED + "'/cm help 2'" + ChatColor.WHITE + " to see more commands.");								
 							}
 						} catch (NumberFormatException e) {
-							player.sendMessage("Use " + ChatColor.RED + "/cm help [2]");
+							player.sendMessage("Use " + ChatColor.RED + "/cm help [page]");
 						}
 					}
 					return true;
@@ -269,6 +300,12 @@ public class CustomMusic extends JavaPlugin {
 						//==> clear the hashmaps	
 						GlobalData.clearBoxArrays();
 						GlobalData.clearAreaArrays();
+						GlobalData.clearWorldArrays();
+						GlobalData.clearBiomeArrays();
+						GlobalData.clearBoxIgno();
+						GlobalData.clearAreaIgno();
+						GlobalData.clearWorldIgno();
+						GlobalData.clearBiomeIgno();
 						
 						listening = false;
 						try {
@@ -466,6 +503,255 @@ public class CustomMusic extends JavaPlugin {
 						player.sendMessage("Use " + ChatColor.RED + "/cm deletebox [player] <number>");
 
 					return true;
+					
+				
+					//cm setworld [world] [<volume> <priority>]
+				}else if(split.length >= 1 && split[0].equalsIgnoreCase("setworld")) {
+					if (!Permission.permission(player, "cm.world.set", false))
+						player.sendMessage("You don't have permission to set music for worlds!");
+					else {
+						String world = null;
+						Integer volume = null;
+						Integer priority = null;
+						try {
+							if (split.length > 3){
+								world = split[1];
+								volume = Integer.parseInt(split[2]);
+								priority = Integer.parseInt(split[3]);
+								int maxPrior = Permission.getPermissionInteger(player, "cm.maxBoxPriority", 10);
+								if ((priority <= maxPrior || maxPrior==0) && priority <= 10 && volume <= 500) {
+									BoxList.setWorld(player, world, volume, priority);
+								} else
+									player.sendMessage("Volume must be an integral value from 1-500. Priority must be between 1-" + Permission.getPermissionInteger(player, "cm.maxBoxPriority", 10));
+							} else if (split.length == 2) {
+								world = split[1];
+								BoxList.setWorld(player, world, 70, Permission.getPermissionInteger(player, "cm.maxBoxPriority", 10));
+							} else if (split.length == 1) {
+								world = player.getWorld().getName();
+								BoxList.setWorld(player, world, 70, Permission.getPermissionInteger(player, "cm.maxBoxPriority", 10));
+							} else {
+								player.sendMessage("Use " + ChatColor.RED + "'/cm setworld [world] [<volume> <priority>]'");
+							}
+						} catch (NumberFormatException e) {
+							player.sendMessage("Use " + ChatColor.RED + "'/cm setworld [world] [<volume> <priority>]'");
+						}
+						
+					}
+					return true;
+					
+					
+					//cm wchoose [world] <songnumber(s)|all|none>
+				} else if(split.length >= 1 && split[0].equalsIgnoreCase("wchoose")) {
+					if (!Permission.permission(player,"cm.world.set", false)) {
+						player.sendMessage("You don't have permission to manage world-music!");
+					} else {
+						if (split.length > 2) {
+							if (BoxList.chooseWorldSongs(player, split[1], split[2]))  //choose the songs for the box
+								player.sendMessage(ChatColor.RED + "CustomMusic: Songs for world " + split[1] + "  chosen!");						
+							 else {
+								player.sendMessage("Use " + ChatColor.RED + "'/cm wchoose [world] <songnumbers|all|none>'");
+								player.sendMessage("Use " + ChatColor.RED + "'/cm songlist'" + ChatColor.WHITE + " to get a list of songs and their numbers");
+							 }
+						} else if (split.length > 1) {
+							String world = player.getWorld().getName();
+							if (BoxList.chooseWorldSongs(player, world, split[1]))  //choose the songs for the box
+								player.sendMessage(ChatColor.RED + "CustomMusic: Songs for world " + world + "  chosen!");						
+							 else {
+								player.sendMessage("Use " + ChatColor.RED + "'/cm wchoose [world] <songnumbers|all|none>'");
+								player.sendMessage("Use " + ChatColor.RED + "'/cm songlist'" + ChatColor.WHITE + " to get a list of songs and their numbers");
+							 }
+							
+						} else {
+							player.sendMessage("Use " + ChatColor.RED + "'/cm wchoose [world] <songnumbers|all|none>'");	
+							player.sendMessage("Use " + ChatColor.RED + "'/cm songlist'" + ChatColor.WHITE + " to get a list of songs and their numbers");
+						}
+					}
+					return true;
+					
+					
+					// "/cm wchooseradio [world] <radionumber>"
+				} else if (split.length >= 1 && split[0].equalsIgnoreCase("wchooseradio")) {
+					
+					if (!Permission.permission(player,"cm.world.set", false)) {
+						player.sendMessage("You don't have permission to manage world-music!");
+						return true;
+					}
+					
+					String radionumberstring = null;
+					String world = null;
+					
+					if (split.length > 2) {
+						radionumberstring = split[2];
+						world = split[1];
+					} else {
+						world = player.getWorld().getName();
+					}
+					
+					if (split.length > 1) {
+						try {
+							radionumberstring = split[1];
+							if (BoxList.chooseWorldStation(player, world, Integer.parseInt(radionumberstring))) { 
+								player.sendMessage(ChatColor.RED + "CustomMusic: Stations for world " + world + "  chosen!");
+							}
+													
+						} catch (NumberFormatException e) {
+							player.sendMessage("Use " + ChatColor.RED + "'/cm wchooseradio [world] <radionumber>'");
+							player.sendMessage("Use " + ChatColor.RED + "'/cm radiolist'" + ChatColor.WHITE + " to get a list of radio stations and their numbers");
+						}
+					
+					} else {
+						player.sendMessage("Use " + ChatColor.RED + "'/cm wchooseradio [world] <radionumber>'");
+						player.sendMessage("Use " + ChatColor.RED + "'/cm radiolist'" + ChatColor.WHITE + " to get a list of radio stations and their numbers");
+					}
+					return true;
+					
+					
+					//cm setbiome [biome] [<volume> <priority>]
+				}else if(split.length >= 1 && split[0].equalsIgnoreCase("setbiome")) {
+					if (!Permission.permission(player, "cm.biome.set", false))
+						player.sendMessage("You don't have permission to set music for biomes!");
+					else {
+						String biome = null;
+						Integer volume = null;
+						Integer priority = null;
+						try {
+							if (split.length > 3){
+								biome = split[1];
+								volume = Integer.parseInt(split[2]);
+								priority = Integer.parseInt(split[3]);
+								int maxPrior = Permission.getPermissionInteger(player, "cm.maxBoxPriority", 10);
+								if ((priority <= maxPrior || maxPrior==0) && priority <= 10 && volume <= 500) {
+									BoxList.setBiome(player, biome, volume, priority);
+								} else
+									player.sendMessage("Volume must be an integral value from 1-500. Priority must be between 1-" + Permission.getPermissionInteger(player, "cm.maxBoxPriority", 10));
+							} else if (split.length == 2) {
+								biome = split[1];
+								BoxList.setBiome(player, biome, 70, Permission.getPermissionInteger(player, "cm.maxBoxPriority", 10));
+							} else if (split.length == 1) {
+								biome = player.getLocation().getBlock().getBiome().toString();
+								BoxList.setBiome(player, biome, 70, Permission.getPermissionInteger(player, "cm.maxBoxPriority", 10));
+							} else {
+								player.sendMessage("Use " + ChatColor.RED + "'/cm setbiome [biome] [<volume> <priority>]'");
+								player.sendMessage("Use " + ChatColor.RED + "'/cm biomes'" + ChatColor.WHITE + " to get a list of available biomes");
+							}
+						} catch (NumberFormatException e) {
+							player.sendMessage("Use " + ChatColor.RED + "'/cm setbiome [biome] [<volume> <priority>]'");
+							player.sendMessage("Use " + ChatColor.RED + "'/cm biomes'" + ChatColor.WHITE + " to get a list of available biomes");
+						}
+						
+					}
+					return true;
+					
+					
+					//cm biochoose [biome] <songnumber(s)|all|none>
+				} else if(split.length >= 1 && split[0].equalsIgnoreCase("biochoose")) {
+					if (!Permission.permission(player,"cm.biome.set", false)) {
+						player.sendMessage("You don't have permission to manage biome-music!");
+					} else {
+						if (split.length > 2) {
+							if (BoxList.chooseBiomeSongs(player, split[1], split[2]))  //choose the songs for the box
+								player.sendMessage(ChatColor.RED + "CustomMusic: Songs for biome " + split[1] + "  chosen!");							
+							else {
+								player.sendMessage("Use " + ChatColor.RED + "'/cm biochoose <biome> <songnumbers|all|none>'");
+								player.sendMessage("Use " + ChatColor.RED + "'/cm songlist'" + ChatColor.WHITE + " to get a list of songs and their numbers");
+							}
+							
+						} else if (split.length > 1) {
+							String biome = player.getLocation().getBlock().getBiome().toString();
+							if (BoxList.chooseBiomeSongs(player, biome, split[1]))  //choose the songs for the box
+								player.sendMessage(ChatColor.RED + "CustomMusic: Songs for biome " + biome + "  chosen!");							
+							else {
+								player.sendMessage("Use " + ChatColor.RED + "'/cm biochoose <biome> <songnumbers|all|none>'");
+								player.sendMessage("Use " + ChatColor.RED + "'/cm songlist'" + ChatColor.WHITE + " to get a list of songs and their numbers");
+							}
+							
+						} else {
+							player.sendMessage("Use " + ChatColor.RED + "'/cm biochoose <biome> <songnumbers|all|none>'");
+							player.sendMessage("Use " + ChatColor.RED + "'/cm songlist'" + ChatColor.WHITE + " to get a list of songs and their numbers");
+						}
+						
+					}
+					return true;
+					
+					
+					// "/cm biochooseradio [biome] <radionumber>"
+				} else if (split.length >= 1 && split[0].equalsIgnoreCase("biochooseradio")) {
+					
+					if (!Permission.permission(player,"cm.biome.set", false)) {
+						player.sendMessage("You don't have permission to manage biome-music!");
+						return true;
+					}
+					
+					String radionumberstring = null;
+					String biome = null;
+					
+					if (split.length > 2) {
+						radionumberstring = split[2];
+						biome = split[1];
+					} else {
+						biome = player.getLocation().getBlock().getBiome().toString();
+					}
+					
+					if (split.length > 1) {
+						try {
+							radionumberstring = split[1];
+							if (BoxList.chooseBiomeStation(player, biome, Integer.parseInt(radionumberstring))) { 
+								player.sendMessage(ChatColor.RED + "CustomMusic: Stations for biome " + biome + "  chosen!");
+							}
+													
+						} catch (NumberFormatException e) {
+							player.sendMessage("Use " + ChatColor.RED + "'/cm biochooseradio [biome] <radionumber>'");
+							player.sendMessage("Use " + ChatColor.RED + "'/cm radiolist'" + ChatColor.WHITE + " to get a list of radio stations and their numbers");
+						}
+					
+					} else {
+						player.sendMessage("Use " + ChatColor.RED + "'/cm biochooseradio [biome] <radionumber>'");
+						player.sendMessage("Use " + ChatColor.RED + "'/cm radiolist'" + ChatColor.WHITE + " to get a list of radio stations and their numbers");
+					}
+					return true;					
+					
+					
+					// "/cm biomes"
+				} else if (split.length == 1 && split[0].equalsIgnoreCase("biomes")) {
+					player.sendMessage("Available biomes:");
+					for(int i = 0;i<GlobalData.av_biomes.length;i++) {
+						player.sendMessage(GlobalData.av_biomes[i]);
+					}
+					return true;
+					
+				
+					
+					// "/cm worldlist <page>"
+				} else if (split.length >= 1 && split[0].equalsIgnoreCase("worldlist")) {
+					
+					if (split.length > 1) {
+						try {
+							int Page = Integer.parseInt(split[1]);
+							if (Page > 0)
+								BoxList.listWorlds(player, Page);
+							
+						} catch (NumberFormatException e) {
+							player.sendMessage("Use " + ChatColor.RED + "/cm worldlist <page>");
+						}
+					} else
+						player.sendMessage("Use " + ChatColor.RED + "/cm worldlist <page>");
+					return true;
+					
+					// "/cm biomelist <page>"
+				} else if (split.length >= 1 && split[0].equalsIgnoreCase("biomelist")) {
+					
+					if (split.length > 1) {
+						try {
+							int Page = Integer.parseInt(split[1]);
+							if (Page > 0)
+								BoxList.listBiomes(player, Page);
+							
+						} catch (NumberFormatException e) {
+							player.sendMessage("Use " + ChatColor.RED + "/cm biomelist <page>");
+						}
+					} else
+						player.sendMessage("Use " + ChatColor.RED + "/cm biomelist <page>");
+					return true;
 
 					// "/cm init"
 				} else if (split.length == 1 && split[0].equalsIgnoreCase("init")) {
@@ -566,7 +852,7 @@ public class CustomMusic extends JavaPlugin {
 						}
 					
 					} else if (split.length > 2) { //player parameter is used
-						if (Permission.permission(player, "cm.radio.delete.player", true)) {
+						if (Permission.permission(player, "cm.radio.delete.player", false)) {
 							try {
 								int number = Integer.parseInt(split[2]); //song's number
 								if (number > 0)
@@ -834,6 +1120,47 @@ public class CustomMusic extends JavaPlugin {
 						player.sendMessage("Use " + ChatColor.RED + "/cm unignorearea <player> <number>");
 					return true;
 					
+					
+					// "/cm ignoreworld [world]"
+				} else if (split.length >= 1 && split[0].equalsIgnoreCase("ignoreworld")) {
+					if (split.length > 1)
+						BoxList.ignoreWorld(player, split[1]); //player = split[1]
+					else {
+						String world = player.getWorld().getName();
+						BoxList.ignoreWorld(player, world); //player = split[1]
+					}
+					return true;
+					
+					// "/cm unignoreworld [world]"
+				} else if (split.length >= 1 && split[0].equalsIgnoreCase("unignoreworld")) {
+					if (split.length > 1)
+						BoxList.unignoreWorld(player, split[1]); //player = split[1]
+					else {
+						String world = player.getWorld().getName();
+						BoxList.unignoreWorld(player, world); //player = split[1]
+					}
+					return true;
+				
+					// "/cm ignorebiome [biome]"
+				} else if (split.length >= 1 && split[0].equalsIgnoreCase("ignorebiome")) {
+					if (split.length > 1)
+						BoxList.ignoreBiome(player, split[1]); //player = split[1]
+					else {
+						String biome = player.getLocation().getBlock().getBiome().toString();
+						BoxList.ignoreBiome(player, biome); //player = split[1]
+					}
+					return true;
+					
+					// "/cm unignorebiome [biome]"
+				} else if (split.length >= 1 && split[0].equalsIgnoreCase("unignorebiome")) {
+					if (split.length > 1)
+						BoxList.unignoreBiome(player, split[1]); //player = split[1]
+					else {
+						String biome = player.getLocation().getBlock().getBiome().toString();
+						BoxList.unignoreBiome(player, biome); //player = split[1]
+					}
+					return true;
+					
 					// "/cm ignorelist <page>"
 				} else if (split.length >= 1 && split[0].equalsIgnoreCase("ignorelist")) {
 					
@@ -841,7 +1168,7 @@ public class CustomMusic extends JavaPlugin {
 						try {
 							int Page = Integer.parseInt(split[1]);
 							if (Page > 0)
-								BoxList.listIgno(player, Page); //list the own boxes
+								BoxList.listIgno(player, Page);
 							
 						} catch (NumberFormatException e) {
 							player.sendMessage("Use " + ChatColor.RED + "/cm ignorelist <page>");
@@ -992,19 +1319,19 @@ public class CustomMusic extends JavaPlugin {
 					player.sendMessage(ChatColor.RED + "'/cm deletebox [player] <number>'");
 					player.sendMessage(ChatColor.RED + "'/cm definearea <1|2>'");
 					player.sendMessage(ChatColor.RED + "'/cm setarea <number> [fadeout-range] [priority]'");
-					player.sendMessage(ChatColor.RED + "'/cm deletearea [player] <number>'");													
+					player.sendMessage(ChatColor.RED + "'/cm deletearea [player] <number>'");	
+					player.sendMessage(ChatColor.RED + "'/cm setworld [world] [<volume> <priority>]'");
+					player.sendMessage(ChatColor.RED + "'/cm setbiome [biome] [<volume> <priority>]'");
 					player.sendMessage(ChatColor.RED + "'/cm achoose <areanumber> <songnumbers>'");
 					player.sendMessage(ChatColor.RED + "'/cm bchoose <boxnumber> <songnumbers>'");
 					player.sendMessage(ChatColor.RED + "'/cm achooseradio <areanumber> <radionumber>'");
 					player.sendMessage(ChatColor.RED + "'/cm bchooseradio <boxnumber> <radionumber>'");
-					player.sendMessage(ChatColor.RED + "'/cm deletesong [player] <number>'");
-					player.sendMessage(ChatColor.RED + "'/cm deleteradio [player] <number>'");
-					player.sendMessage(ChatColor.RED + "'/cm play [player] <songnumbers>'");
-					player.sendMessage(ChatColor.RED + "'/cm gplay [player] <songnumbers>'");
-					player.sendMessage(ChatColor.RED + "'/cm playradio [player] <radionumber>'");
-					player.sendMessage(ChatColor.RED + "'/cm gplayradio [player] <radionumber>'");
+					player.sendMessage(ChatColor.RED + "'/cm wchoose [world] <songnumbers|all|none>'");
+					player.sendMessage(ChatColor.RED + "'/cm biochoose [biome] <songnumbers|all|none>'");
+					player.sendMessage(ChatColor.RED + "'/cm wchooseradio [world] <radionumber>'");
+					player.sendMessage(ChatColor.RED + "'/cm biochooseradio [biome] <radionumber>'");
 					player.sendMessage(ChatColor.RED + "'/cm volume <value>'");
-					player.sendMessage("Use " + ChatColor.RED + "'/cm help 2'" + ChatColor.WHITE + " to see more commands.");
+					player.sendMessage("Use " + ChatColor.RED + "'/cm help 2'" + ChatColor.WHITE + " to see more commands.");	
 					return true;
 				}
 			} else

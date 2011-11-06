@@ -1,6 +1,5 @@
 package main.java.de.WegFetZ.CustomMusic;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -23,7 +22,7 @@ public class Calculations {
 					if (GlobalData.CMVolume.containsKey(player.getName().toLowerCase()))
 						volume = (volume/100) * (float) GlobalData.CMVolume.get(player.getName().toLowerCase());
 					if (volume > 0 && !ignoreBox(player, box, number)) { //not on ignorelist
-						Mp3PlayerHandler.startPlaying(player, box, String.valueOf((volume)), String.valueOf(number), priority, false); //start playing or only change volume
+						Mp3PlayerHandler.startPlaying(player, box, String.valueOf((volume)), String.valueOf(number), priority, "box"); //start playing or only change volume
 					}
 				} else { //not in range
 					if (Mp3PlayerHandler.isPlaying(player, box, String.valueOf(number))) {
@@ -60,7 +59,7 @@ public class Calculations {
 						if (GlobalData.CMVolume.containsKey(player.getName().toLowerCase()))
 							volume = (volume/100) * (float) GlobalData.CMVolume.get(player.getName().toLowerCase());
 						if (volume > 0 && !ignoreArea(player, area, number)) //not on ignorelist
-							Mp3PlayerHandler.startPlaying(player, area, String.valueOf((volume)), number, priority, true); //start playing music or only change the volume
+							Mp3PlayerHandler.startPlaying(player, area, String.valueOf((volume)), number, priority, "area"); //start playing music or only change the volume
 					} else {
 						if (Mp3PlayerHandler.isPlaying(player, area, number)) 
 							Mp3PlayerHandler.stopPlaying(player, area, number); //stop playing music
@@ -74,24 +73,22 @@ public class Calculations {
 	}
 	
 	public static void world(Player player, Location pos) {
-		if (LoadSettings.WorldMusic && GlobalData.world_count > 0) {
-			String world = pos.getWorld().toString();
+		if (GlobalData.world_count > 0) {
+			String world = pos.getWorld().getName();
 			
 			for (int i =0; i< GlobalData.world_count; i++) {
 				
 				String number = "w" + String.valueOf(i);
 				
-				if (GlobalData.world_aworld[i].equalsIgnoreCase(world)) {
-							
+				if (GlobalData.world_aworld[i].equalsIgnoreCase(world)) {		
 					int priority =  GlobalData.world_aprior[i];
 					float volume =  (float) GlobalData.world_avolume[i];
 					
 					if (GlobalData.CMVolume.containsKey(player.getName().toLowerCase()))
 						volume = (volume/100) * (float) GlobalData.CMVolume.get(player.getName().toLowerCase());
 					if (volume > 0 && !ignoreWorld(player, world)) //not on ignorelist
-						//TODO:command '/cm ignoreworld [world]'
-						Mp3PlayerHandler.startPlaying(player, GlobalData.world_aowner[i], String.valueOf((volume)), number, priority, true); //start playing music
-				} else if (Mp3PlayerHandler.isPlaying(player, GlobalData.world_aowner[i], number)) 
+						Mp3PlayerHandler.startPlaying(player, GlobalData.world_aowner[i], String.valueOf((volume)), number, priority, "world"); //start playing music
+				} else if (Mp3PlayerHandler.isPlaying(player, GlobalData.world_aowner[i], number))
 						Mp3PlayerHandler.stopPlaying(player, GlobalData.world_aowner[i], number); //stop playing music
 				}
 			}
@@ -99,7 +96,7 @@ public class Calculations {
 	
 	
 	public static void biome(Player player, Location pos) {
-		if (LoadSettings.BiomeMusic && GlobalData.biome_count > 0) {
+		if (GlobalData.biome_count > 0) {
 			
 			String biome = pos.getBlock().getBiome().toString();
 			
@@ -114,9 +111,8 @@ public class Calculations {
 					
 					if (GlobalData.CMVolume.containsKey(player.getName().toLowerCase()))
 						volume = (volume/100) * (float) GlobalData.CMVolume.get(player.getName().toLowerCase());
-					if (volume > 0 && !ignoreBiome(player, biome)) //not on ignorelist
-							//TODO:command '/cm ignorebiome [biome]'
-						Mp3PlayerHandler.startPlaying(player, GlobalData.biome_aowner[i], String.valueOf((volume)), number, priority, true); //start playing music
+					if (volume > 0 && !ignoreBiome(player, biome)) //not on ignorelis
+						Mp3PlayerHandler.startPlaying(player, GlobalData.biome_aowner[i], String.valueOf((volume)), number, priority, "biome"); //start playing music
 				} else if (Mp3PlayerHandler.isPlaying(player, GlobalData.biome_aowner[i], number)) 
 						Mp3PlayerHandler.stopPlaying(player, GlobalData.biome_aowner[i], number); //stop playing music
 				}
@@ -302,5 +298,24 @@ public class Calculations {
 		return false;
 		
 	}
+	
+	public static boolean ignoreWorld(Player player, String world) {
+		for (int i = 0;i<GlobalData.world_lignoByPlayer.size();i++) {
+			if (GlobalData.world_lignoByPlayer.get(i).equalsIgnoreCase(String.valueOf(player)) && GlobalData.world_lignoWorld.get(i).equalsIgnoreCase(world))
+				//world is in ignorelist
+				return true;
+		}
+		
+		return false;
+	}
 
+	public static boolean ignoreBiome(Player player, String biome) {
+		for (int i = 0;i<GlobalData.biome_lignoByPlayer.size();i++) {
+			if (GlobalData.biome_lignoByPlayer.get(i).equalsIgnoreCase(String.valueOf(player)) && GlobalData.biome_lignoBiome.get(i).equalsIgnoreCase(biome))
+				//world is in ignorelist
+				return true;
+		}
+		
+		return false;
+	}
 }
