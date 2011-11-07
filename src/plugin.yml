@@ -128,10 +128,10 @@ permissions:
        default: op
     cm.reload:
        description: Allows you to reload the CustomMusic configuration and servers
-       default: true
+       default: op
     cm.world.set:
        description: Allows you to manage world-specific music
-       default: true
+       default: op
     cm.biome.set:
        description: Allows you to manage biome-specific music
-       default: true
+       default: op
