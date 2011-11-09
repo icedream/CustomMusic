@@ -137,7 +137,7 @@ public class Calculations {
 			float distz = Math.min(Math.abs(minz-z),Math.abs(maxz-z));
 			//calculate distance to borders
 			
-			float min_dist = Math.min(Math.min(distx,disty),distz); //get minimum distance
+			float min_dist = Math.min(Math.min(distx,disty),Math.min(distz,Math.min(distx,disty))); //get minimum distance
 			
 			if (min_dist < fadeoutRange) //need to fade the volume
 				return (float) fadeoutRange-min_dist; //the further the border the lower the return value
