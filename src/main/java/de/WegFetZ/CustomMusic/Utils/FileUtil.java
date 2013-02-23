@@ -23,8 +23,11 @@ public class FileUtil {
 	
 	
 	public static String getTextContent(URL url) throws IOException {
-	    Scanner s = new Scanner(url.openStream()).useDelimiter("\\Z");;
+	    Scanner s1 = new Scanner(url.openStream());
+	    Scanner s = s1.useDelimiter("\\Z");
 	    String content = s.next();
+	    s.close();
+	    s1.close();
 	    return content;
 	}
 
