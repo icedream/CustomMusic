@@ -3,19 +3,18 @@ package main.java.de.WegFetZ.CustomMusic;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.*;
 
 /**
  * Handle events for all Player related events
  * 
  * @author WegFetZ
  */
-public class CMPlayerListener extends PlayerListener {
+public class CMPlayerListener implements Listener {
 
-
+	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (Permission.permission(player, "cm.init", true)) {
@@ -26,6 +25,7 @@ public class CMPlayerListener extends PlayerListener {
 												//because the player has no permission to initialize
 	}
 
+	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		GlobalData.CMUsers.remove(player.getName().toLowerCase());
@@ -37,6 +37,7 @@ public class CMPlayerListener extends PlayerListener {
 		
 	}
 
+	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
 		

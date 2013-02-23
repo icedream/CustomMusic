@@ -3,7 +3,6 @@ package main.java.de.WegFetZ.CustomMusic;
 import java.io.File;
 import java.io.IOException;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -44,9 +43,7 @@ public class CustomMusic extends JavaPlugin {
 		if (LoadSettings.debug) System.out.println("[CustomMusic] Running in debug-mode.");
 		
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_MOVE, this.playerListener, Event.Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_JOIN, this.playerListener, Event.Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_QUIT, this.playerListener, Event.Priority.Normal, this);
+		pm.registerEvents(this.playerListener, this);
 		//==> register the player events
 
 		new File(maindir).mkdir();

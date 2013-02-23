@@ -11,9 +11,7 @@ import ru.tehkode.permissions.bukkit.*;
 public class Permission {
 
 	private enum PermissionHandler {
-
-
-GROUP_MANAGER, SUPER_PERMS, PERMISSIONS_EX, NONE
+		GROUP_MANAGER, SUPER_PERMS, PERMISSIONS_EX, NONE
 	}
 
 	private static PermissionHandler handler;
@@ -40,7 +38,8 @@ GROUP_MANAGER, SUPER_PERMS, PERMISSIONS_EX, NONE
 			handler = PermissionHandler.SUPER_PERMS;
 			String version = bPermissions.getDescription().getVersion();
 			System.out.println("[CustomMusic] Permissions enabled using: PermissionsBukkit v" + version);
-		} else if (groupManager != null) {
+		} 
+		else if (groupManager != null) {
 			permissionPlugin = groupManager;
 			handler = PermissionHandler.GROUP_MANAGER;
 			String version = groupManager.getDescription().getVersion();
